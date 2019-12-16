@@ -96,9 +96,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 var birtDate = DateTime.Parse(birtDateString);
 
 
-                //person.FirstName = firstName;
-                //person.LastName = lastName;
-                //person.BithDate = birtDate;
+                person.FirstName = firstName;
+                person.LastName = lastName;
+                person.BithDate = birtDate;
             }
             catch(Exception e)
             {

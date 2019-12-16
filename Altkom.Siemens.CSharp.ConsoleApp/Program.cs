@@ -3,6 +3,7 @@ using Altkom.Siemens.CSharp.ConsoleApp.Models;
 using Altkom.Siemens.CSharp.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,8 +35,11 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             {
                 switch (command)
                 {
+                    case Commands.Add:
+                        AddPerson();
+                        break;
                     case Commands.Edit:
-                        EditPerson(Context.Read(id));
+                        EditPerson(id);
                         break;
                     case Commands.Exit:
                         return false;
@@ -45,16 +49,50 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
-        private static void EditPerson(Person person)
+        private static void AddPerson()
+        {
+            var person = new Person();
+            if (EditPerson(person))
+                Context.Create(person);
+
+        }
+
+        private static void EditPerson(int id)
+        {
+            var person = Context.Read(id);
+            if(EditPerson(person))
+            Context.Update(person);
+        }
+
+        private static bool EditPerson(Person person)
         {
             if (person == null)
-                return;
+                return false;
+            try
+            {
+                Console.WriteLine(nameof(Person.FirstName));
+                SendKeys.SendWait(person.FirstName);
+                var firstName = Console.ReadLine();
 
-            Console.WriteLine(nameof(Person.FirstName));
-            SendKeys.SendWait(person.FirstName);
-            person.FirstName = Console.ReadLine();
+                Console.WriteLine(nameof(Person.LastName));
+                SendKeys.SendWait(person.LastName);
+                var lastName = Console.ReadLine();
 
-            Context.Update(person);
+                Console.WriteLine(nameof(Person.BithDate));
+                SendKeys.SendWait(person.BithDate.ToShortDateString());
+                var birtDate = DateTime.Parse(Console.ReadLine());
+
+
+                person.FirstName = firstName;
+                person.LastName = lastName;
+                person.BithDate = birtDate;
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine(e);
+                return false;
+            }
+            return true;
         }
 
         static void DisplayPeople()

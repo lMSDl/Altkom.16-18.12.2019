@@ -93,14 +93,13 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                     return !DateTime.TryParse(text, out dateTime);
                 }
                 );
-                var birtDate = DateTime.Parse(birtDateString);
+                var genderString = ReadPersonData(nameof(Person.Gender), person.Gender.ToString(), text => !Enum.IsDefined(typeof(Genders), text));
 
-                //TODO 3. Dodajemy edycję płci
-                //TODO 4. Walidator płci Enum.IsDefined(typeof(Genders), ...)
 
                 person.FirstName = firstName;
                 person.LastName = lastName;
-                person.BithDate = birtDate;
+                person.BithDate = DateTime.Parse(birtDateString);
+                person.Gender = (Genders)Enum.Parse(typeof(Genders), genderString);
             }
             catch(Exception e)
             {
@@ -129,8 +128,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             List<string> personInfo = new List<string>();
             foreach (var item in Context.Read())
             {
-                personInfo.Add(string.Format("{0, -3} {1, -15} {2, -15} {3, -10}",
-                    item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString()));
+                personInfo.Add(string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+                    item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString(), item.Gender));
             }
             var @string = string.Join("\n", personInfo);
             //if(TextOutput != null)

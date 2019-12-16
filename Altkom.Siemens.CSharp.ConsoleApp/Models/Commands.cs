@@ -10,6 +10,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Models
     {
         Exit,
         Edit,
-        Add
+        Add,
+        Delete
     }
 }

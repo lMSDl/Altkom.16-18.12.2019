@@ -35,6 +35,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             {
                 switch (command)
                 {
+                    case Commands.Delete:
+                        DeletePerson(id);
+                        break;
                     case Commands.Add:
                         AddPerson();
                         break;
@@ -47,6 +50,11 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             }
 
             return true;
+        }
+
+        private static void DeletePerson(int id)
+        {
+            Context.Delete(id);
         }
 
         private static void AddPerson()

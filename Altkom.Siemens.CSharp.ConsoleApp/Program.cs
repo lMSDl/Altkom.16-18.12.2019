@@ -14,9 +14,15 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
     class Program
     {
         static Context Context { get; } = new Context();
+        delegate void Output(string output);
+        static Output TextOutput { get; set; }
 
         static void Main(string[] args)
         {
+            TextOutput += WriteToConsole;
+            TextOutput += outputString => Debug.WriteLine(outputString);
+
+
             do
             {
                 DisplayPeople();
@@ -78,22 +84,21 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 return false;
             try
             {
-                Console.WriteLine(nameof(Person.FirstName));
-                SendKeys.SendWait(person.FirstName);
-                var firstName = Console.ReadLine();
+                var firstName = ReadPersonData(nameof(Person.FirstName), person.FirstName, text => string.IsNullOrWhiteSpace(text));
+                var lastName = ReadPersonData(nameof(Person.LastName), person.LastName, text => string.IsNullOrWhiteSpace(text));
 
-                Console.WriteLine(nameof(Person.LastName));
-                SendKeys.SendWait(person.LastName);
-                var lastName = Console.ReadLine();
+                var birtDateString = ReadPersonData(nameof(Person.BithDate), person.BithDate.ToShortDateString(), text => 
+                {
+                    DateTime dateTime;
+                    return !DateTime.TryParse(text, out dateTime);
+                }
+                );
+                var birtDate = DateTime.Parse(birtDateString);
 
-                Console.WriteLine(nameof(Person.BithDate));
-                SendKeys.SendWait(person.BithDate.ToShortDateString());
-                var birtDate = DateTime.Parse(Console.ReadLine());
 
-
-                person.FirstName = firstName;
-                person.LastName = lastName;
-                person.BithDate = birtDate;
+                //person.FirstName = firstName;
+                //person.LastName = lastName;
+                //person.BithDate = birtDate;
             }
             catch(Exception e)
             {
@@ -103,14 +108,39 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
+        //delegate bool PersonDataValidator(string input);
+        
+        static string ReadPersonData(string header, string currentValue, Func<string, bool> validator)
+        {
+            string input;
+            do
+            {
+                TextOutput(header);
+                SendKeys.SendWait(currentValue);
+                input = Console.ReadLine();
+            } while (validator?.Invoke(input) ?? true);
+            return input;
+        }
+
         static void DisplayPeople()
         {
+            List<string> personInfo = new List<string>();
             foreach (var item in Context.Read())
             {
-                var personInfo = string.Format("{0, -3} {1, -15} {2, -15} {3, -10}",
-                    item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString());
-                Console.WriteLine(personInfo);
+                personInfo.Add(string.Format("{0, -3} {1, -15} {2, -15} {3, -10}",
+                    item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString()));
             }
+            var @string = string.Join("\n", personInfo);
+            //if(TextOutput != null)
+            TextOutput?.Invoke(@string);
         }
+
+        static void WriteToConsole(string output)
+        {
+            Console.Clear();
+            Console.WriteLine(output);
+            Console.WriteLine();
+        }
+
     }
 }

@@ -16,6 +16,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         static Context Context { get; } = new Context();
         delegate void Output(string output);
         static Output TextOutput { get; set; }
+        static Func<IEnumerable<Person>, IEnumerable<Person>> OrderByFunc;
+
 
         static void Main(string[] args)
         {
@@ -41,6 +43,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             {
                 switch (command)
                 {
+                    case Commands.OrderBy:
+                        OrderBy();
+                        break;
                     case Commands.Delete:
                         DeletePerson(id);
                         break;
@@ -56,6 +61,11 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             }
 
             return true;
+        }
+
+        private static void OrderBy()
+        {
+
         }
 
         private static void DeletePerson(int id)
@@ -125,13 +135,25 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         static void DisplayPeople()
         {
-            List<string> personInfo = new List<string>();
-            foreach (var item in Context.Read())
-            {
-                personInfo.Add(string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
-                    item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString(), item.Gender));
-            }
-            var @string = string.Join("\n", personInfo);
+            //List<string> personInfo = new List<string>();
+            //foreach (var item in Context.Read())
+            //{
+            //    personInfo.Add(string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+            //        item.PersonId, item.FirstName, item.LastName, item.BithDate.ToShortDateString(), item.Gender));
+            //}
+            //var @string = string.Join("\n", personInfo);
+
+
+            //var @string = string.Join("\n", from person in Context.Read() select
+            //                                string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+            //        person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
+            var @string = string.Join("\n", Context.Read().Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender)));
+
+            @string = Context.Read().Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender))
+                    .Aggregate((a, b) => a + "\n" + b);
+
             //if(TextOutput != null)
             TextOutput?.Invoke(@string);
         }

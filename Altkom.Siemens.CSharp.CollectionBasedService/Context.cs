@@ -23,12 +23,19 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
 
         public int Create(Person entity)
         {
-            int maxId = 0;
-            foreach (var person in People)
-            {
-                if (person.PersonId > maxId)
-                    maxId = person.PersonId;
-            }
+            var values = from person in People
+                         select person.PersonId;
+
+            int maxId = values.Max();
+            maxId = People.Select(person => person.PersonId).Max();
+
+
+            //int maxId = 0;
+            //foreach (var person in People)
+            //{
+            //    if (person.PersonId > maxId)
+            //        maxId = person.PersonId;
+            //}
             entity.PersonId = maxId + 1;
             People.Add(entity);
             return entity.PersonId;
@@ -45,19 +52,28 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
 
         public Person Read(int id)
         {
-            foreach (var item in People)
-            {
-                if (item.PersonId == id)
-                    return item;
-            }
-            return null;
+            //return (from person in People
+            //              where person.PersonId == id
+            //              select person).SingleOrDefault();
+            return People.SingleOrDefault(person => person.PersonId == id);
+
+
+            //foreach (var item in People)
+            //{
+            //    if (item.PersonId == id)
+            //        return item;
+            //}
+            //return null;
         }
 
         public IEnumerable<Person> Read()
         {
-            var list = new List<Person>();
-            list.AddRange(People);
-            return list;
+            //return from person in People select person;
+            return People.ToList();
+            
+            //var list = new List<Person>();
+            //list.AddRange(People);
+            //return list;
         }
 
         public bool Update(Person entity)

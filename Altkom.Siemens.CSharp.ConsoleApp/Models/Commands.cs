@@ -11,6 +11,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Models
         Exit,
         Edit,
         Add,
-        Delete
+        Delete,
+        OrderBy
     }
 }

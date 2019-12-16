@@ -95,6 +95,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 );
                 var birtDate = DateTime.Parse(birtDateString);
 
+                //TODO 3. Dodajemy edycję płci
+                //TODO 4. Walidator płci Enum.IsDefined(typeof(Genders), ...)
 
                 person.FirstName = firstName;
                 person.LastName = lastName;

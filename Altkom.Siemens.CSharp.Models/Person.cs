@@ -27,5 +27,8 @@ namespace Altkom.Siemens.CSharp.Models
 
         public string LastName { get; set; }
         public DateTime BithDate { get; set; }
+
+        //TODO 1. Dodajemy nowy enum Genders
+        //TODO 2. Dodajemy w Person właściowść typu Genders
     }
 }

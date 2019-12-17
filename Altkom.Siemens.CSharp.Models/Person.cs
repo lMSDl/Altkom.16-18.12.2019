@@ -15,7 +15,7 @@ namespace Altkom.Siemens.CSharp.Models
         public string FirstName {
             get
             {
-                Debug.WriteLine("Wywołanie gettera Person FirstName");
+                //Debug.WriteLine("Wywołanie gettera Person FirstName");
                 return _firstName;
             }
             set
@@ -28,5 +28,6 @@ namespace Altkom.Siemens.CSharp.Models
         public string LastName { get; set; }
         public DateTime BithDate { get; set; }
         public Genders Gender { get; set; }
+
     }
 }

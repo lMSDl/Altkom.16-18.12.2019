@@ -27,9 +27,11 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
                          select person.PersonId;
 
             int maxId = values.Max();
-            maxId = People.Select(person => person.PersonId).Max();
 
+            //* Równoważne zapytanie LINQ w postaci łańcucha metod
+            //maxId = People.Select(person => person.PersonId).Max();
 
+            
             //int maxId = 0;
             //foreach (var person in People)
             //{

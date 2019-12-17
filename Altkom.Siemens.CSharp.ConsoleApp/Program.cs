@@ -14,16 +14,24 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
     class Program
     {
         static Context Context { get; } = new Context();
+
+        //* delegat - wskaźnik na funkcje
         delegate void Output(string output);
         static Output TextOutput { get; set; }
+
+        //* Func i Action - predefiniowane generyczne delegaty. Action przyjmuje tylko parametry wejściowe, dla Func określamy dodatkowo typ zwracany.
         static Func<IEnumerable<Person>, IEnumerable<Person>> OrderByFunc;
 
 
         static void Main(string[] args)
         {
+            //* Delegaty mogą wskazywać na kilka funkcje jednocześnie. Wszystkie z nich zostaną wykonane podczas wywołania delegata.
             TextOutput += WriteToConsole;
+            //* Przypisanie do delegata metody anonimowej z wykorzystaniem wyrażenia lambda
+            //* () => Funckja() - wyrażenie lambda nie przyjmujące parametrów. Zamiast parametrów nawiasy.
+            //* parametr => Funckja(parametr) - wyrażenie lambda z jednym parametrem
+            //* (parametr1, parametr2, ..) => Funcja(parametr1, parametr2, ...) - wyrażenie lambda z wieloma parametrami. Parametry w nawiasach.
             TextOutput += outputString => Debug.WriteLine(outputString);
-
 
             do
             {
@@ -119,8 +127,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
+        //* Func<string, bool> zastąpiło delegata PersonDataValidator
         //delegate bool PersonDataValidator(string input);
-        
+
         static string ReadPersonData(string header, string currentValue, Func<string, bool> validator)
         {
             string input;
@@ -135,6 +144,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         static void DisplayPeople()
         {
+
+            //*1. wyświetlanie za pomocą budowania tekstu wyjściowego poprzez iterację po elementach
+            //
             //List<string> personInfo = new List<string>();
             //foreach (var item in Context.Read())
             //{
@@ -143,17 +155,28 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             //}
             //var @string = string.Join("\n", personInfo);
 
-
+            //*2. wykorzystanie LINQ QUERY do budowy wyświetlanego tekstu
+            //
             //var @string = string.Join("\n", from person in Context.Read() select
             //                                string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
             //        person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
-            var @string = string.Join("\n", Context.Read().Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
-                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender)));
 
-            @string = Context.Read().Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
-                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender))
-                    .Aggregate((a, b) => a + "\n" + b);
 
+            //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
+            var people = Context.Read();
+
+            var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
+            var @string = string.Join("\n", strings);
+
+
+            //*4. Zastąpienie string.Join metodą LINQ - Aggregate
+            //
+            //@string = Context.Read().Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
+            //        person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender))
+            //        .Aggregate((a, b) => a + "\n" + b);
+
+            //* Znak zapytania przed odwołaniem się do funkcji działa jak sprawdzenie czy obiekt nie jest null
             //if(TextOutput != null)
             TextOutput?.Invoke(@string);
         }

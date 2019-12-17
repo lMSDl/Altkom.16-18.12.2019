@@ -1,4 +1,5 @@
 ﻿using Altkom.Siemens.CSharp.CollectionBasedService;
+using Altkom.Siemens.CSharp.ConsoleApp.Extensions;
 using Altkom.Siemens.CSharp.ConsoleApp.Models;
 using Altkom.Siemens.CSharp.IServices;
 using Altkom.Siemens.CSharp.Models;
@@ -44,37 +45,42 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         static bool ExecuteCommand(string input)
         {
             var splittedInput = input.Split(' ', '.');
-            int id = 0;
+            int? id = null;
             if (splittedInput.Length > 1)
-                int.TryParse(splittedInput[1], out id);
+            //    int.TryParse(splittedInput[1], out id);
+                id = splittedInput[1].ToInt();
 
-            if (Enum.TryParse(splittedInput[0], true, out Commands command))
-            {
-                switch (command)
+            //if (Enum.TryParse(splittedInput[0], true, out Commands command))
+            //{
+                switch (splittedInput[0].ToCommand())
                 {
                     case Commands.OrderBy:
-                        OrderBy();
+                        OrderByPersonProperty();
                         break;
                     case Commands.Delete:
-                        DeletePerson(id);
+                        if(id.HasValue)
+                            DeletePerson(id.Value);
                         break;
                     case Commands.Add:
                         AddPerson();
                         break;
                     case Commands.Edit:
-                        EditPerson(id);
+                        if (id.HasValue)
+                            EditPerson(id.Value);
                         break;
                     case Commands.Exit:
                         return false;
-                }
-            }
-
+                    default:
+                        break;
+                }   
+            //}
+            
             return true;
         }
 
-        private static void OrderBy()
+        private static void OrderByPersonProperty()
         {
-            //TODO 1. Przypisać do OrderByFunc zapytanie LINQ sortujące wg nazwiska
+            OrderByFunc += collection => collection.OrderBy(person => person.LastName);
         }
 
         private static void DeletePerson(int id)
@@ -184,8 +190,14 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
 
             var people = Context.Read();
+            people = OrderByFunc?.Invoke(people) ?? people;
+            //if (OrderByFunc != null)
+            //{
+            //    people = OrderByFunc.Invoke(people);
+            //}
+            //else
+            //    people = people;
 
-            //TODO 2. wywołać funkcje delegata OrderByFunc jeśli nie jest null 
 
             //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
             var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",

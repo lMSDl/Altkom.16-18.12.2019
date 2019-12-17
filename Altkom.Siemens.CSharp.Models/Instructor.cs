@@ -33,5 +33,10 @@ namespace Altkom.Siemens.CSharp.Models
         {
             InstructorId = id;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + string.Format("{0, -5} {1, 15}", YearsOfWork, Specialization);
+        }
     }
 }

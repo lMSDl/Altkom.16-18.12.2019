@@ -54,5 +54,10 @@ namespace Altkom.Siemens.CSharp.Models
         }
         public abstract int GetId();
         public abstract void SetId(int id);
+
+        public override string ToString()
+        {
+            return string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}", GetId(), FirstName, LastName, GetAge(), Gender);
+        }
     }
 }

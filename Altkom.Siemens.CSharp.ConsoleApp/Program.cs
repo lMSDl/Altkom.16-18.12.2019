@@ -19,7 +19,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 new Instructor("Adam", "Adamski", Genders.Male, 3, "Programming") { InstructorId = 1 },
                 new Instructor("Piotr", "Piotrowski", Genders.Male, 2, "Economy") { InstructorId = 2 },
                 new Instructor("Michał", "Michalski", Genders.Male, 6, "Not specified") { InstructorId = 3 },
-                new Instructor("Ewa", "Michalski", Genders.Female, 7, "Not specified") { InstructorId = 4 }
+                new Student("Ewa", "Michalska", Genders.Female, 2) { StudentId = 4 },
+                new Student("Ewa", "Ewowska", Genders.Female, 1) { StudentId = 5 }
             });
 
         //* delegat - wskaźnik na funkcje
@@ -214,8 +215,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
 
             //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
-            var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
-                    person.GetId(), person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
+            var strings =  people.Select(person => person.ToString());
             var @string = string.Join("\n", strings);
 
 

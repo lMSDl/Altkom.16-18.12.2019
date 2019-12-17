@@ -29,13 +29,13 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
             int maxId = values.Max();
 
             //* Równoważne zapytanie LINQ w postaci łańcucha metod
-            //maxId = People.Select(person => person.PersonId).Max();
+            //maxId = People.Select(person => person.GetId()).Max();
 
-            
+
             //int maxId = 0;
             //foreach (var person in People)
             //{
-            //    if (person.PersonId > maxId)
+            //    if (person.GetId() > maxId)
             //        maxId = person.PersonId;
             //}
             entity.SetId(maxId + 1);
@@ -55,14 +55,14 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
         public Person Read(int id)
         {
             //return (from person in People
-            //              where person.PersonId == id
+            //              where person.GetId() == id
             //              select person).SingleOrDefault();
             return People.SingleOrDefault(person => person.GetId() == id);
 
 
             //foreach (var item in People)
             //{
-            //    if (item.PersonId == id)
+            //    if (item.GetId() == id)
             //        return item;
             //}
             //return null;

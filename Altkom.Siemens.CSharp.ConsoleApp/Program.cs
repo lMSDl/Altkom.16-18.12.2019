@@ -58,27 +58,36 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
             //if (Enum.TryParse(splittedInput[0], true, out Commands command))
             //{
-                switch (splittedInput[0].ToCommand())
-                {
-                    case Commands.OrderBy:
-                        OrderByPersonProperty(splittedInput.Length > 1 ? splittedInput[1] : null);
-                        break;
-                    case Commands.Delete:
-                        if(id.HasValue)
-                            DeletePerson(id.Value);
-                        break;
-                    case Commands.Add:
-                        AddPerson();
-                        break;
-                    case Commands.Edit:
-                        if (id.HasValue)
-                            EditPerson(id.Value);
-                        break;
-                    case Commands.Exit:
-                        return false;
-                    default:
-                        break;
-                }   
+            switch (splittedInput[0].ToCommand())
+            {
+                case Commands.OrderBy:
+                    OrderByPersonProperty(splittedInput.Length > 1 ? splittedInput[1] : null);
+                    break;
+                case Commands.Delete:
+                    if(id.HasValue)
+                        DeletePerson(id.Value);
+                    break;
+                case Commands.Add:
+                    if(splittedInput.Length > 1)
+                        switch (splittedInput[1])
+                        {
+                            case nameof(Student):
+                                AddStudent();
+                                break;
+                            case nameof(Instructor):
+                                AddInstructor();
+                                break;
+                        }
+                    break;
+                case Commands.Edit:
+                    if (id.HasValue)
+                        EditPerson(id.Value);
+                    break;
+                case Commands.Exit:
+                    return false;
+                default:
+                    break;
+            }   
             //}
             
             return true;
@@ -98,19 +107,36 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             Context.Delete(id);
         }
 
-        private static void AddPerson()
+        private static void AddInstructor()
         {
             var person = new Instructor();
-            if (EditPerson(person))
+            if (EditInstructor(person))
                 Context.Create(person);
 
         }
 
-        private static void EditPerson(int id)
+        private static void AddStudent()
+        {
+
+        }
+
+            private static void EditPerson(int id)
         {
             var person = Context.Read(id);
             if(EditPerson(person))
             Context.Update(person);
+        }
+
+
+        private static bool EditStudent(Student student)
+        {
+
+        }
+
+
+        private static bool EditInstructor(Instructor person)
+        {
+
         }
 
         private static bool EditPerson(Person person)
@@ -124,7 +150,6 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
                 var birtDateString = ReadPersonData(nameof(Person.BithDate), person.BithDate.ToShortDateString(), text => 
                 {
-                    // TODO 2. wykorzystać metodę rozszerzającą
                     //DateTime dateTime;
                     //return !DateTime.TryParse(text, out dateTime);
 
@@ -136,7 +161,6 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
                 person.FirstName = firstName;
                 person.LastName = lastName;
-                // TODO 3. wykorzystać metodę rozszerzającą
                 //person.BithDate = DateTime.Parse(birtDateString);
                 person.BithDate = birtDateString.ToDateTime().Value;
                 person.Gender = (Genders)Enum.Parse(typeof(Genders), genderString);

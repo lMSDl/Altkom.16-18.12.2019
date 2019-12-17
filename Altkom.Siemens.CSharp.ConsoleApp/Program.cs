@@ -40,10 +40,10 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             } while (ExecuteCommand(Console.ReadLine()));
 
         }
-
+        
         static bool ExecuteCommand(string input)
         {
-            var splittedInput = input.Split(' ');
+            var splittedInput = input.Split(' ', '.');
             int id = 0;
             if (splittedInput.Length > 1)
                 int.TryParse(splittedInput[1], out id);
@@ -141,6 +141,26 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 input = Console.ReadLine();
             } while (validator?.Invoke(input) ?? true);
             return input;
+
+        }
+
+        private static void Example()
+        {
+            int? a = null;
+            Nullable<int> b = 5;
+
+            int c;
+            if (a - b == 0)
+                c = (a + b) ?? 0;
+            else
+            {
+                var result = a - b;
+                if (result.HasValue)
+                    c = result.Value;
+                else
+                    c = 0;
+            }
+            c = (a - b == 0 ? a + b : a - b) ?? 0;
         }
 
         static void DisplayPeople()
@@ -163,12 +183,11 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             //        person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
 
 
-            //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
             var people = Context.Read();
 
             //TODO 2. wywołać funkcje delegata OrderByFunc jeśli nie jest null 
 
-
+            //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
             var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
                     person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
             var @string = string.Join("\n", strings);

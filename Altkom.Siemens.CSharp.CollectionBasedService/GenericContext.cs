@@ -8,22 +8,18 @@ using System.Threading.Tasks;
 
 namespace Altkom.Siemens.CSharp.CollectionBasedService
 {
-    public class Context : ICrud<Person>
+    public class GenericContext<T> : ICrud<T> where T : Person
     {
-        public Context()
+        public GenericContext(IEnumerable<T> seed)
         {
-            //People = new List<Person>() {
-            //    new Person() { PersonId = 1, FirstName = "Adam", LastName = "Adamski", BithDate = new DateTime(1950, 2, 12)},
-            //    new Person() { PersonId = 2, FirstName = "Piotr", LastName = "Piotrowski", BithDate = new DateTime(1990, 6, 25)},
-            //    new Person() { PersonId = 3, FirstName = "Michał", LastName = "Michalski", BithDate = new DateTime(1978, 7, 1)},
-            //};
+            Entities = seed.ToList();
         }
 
-        private ICollection<Person> People { get; }
+        private ICollection<T> Entities { get; }
 
-        public int Create(Person entity)
+        public int Create(T entity)
         {
-            var values = from person in People
+            var values = from person in Entities
                          select person.GetId();
 
             int maxId = values.Max();
@@ -39,7 +35,7 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
             //        maxId = person.PersonId;
             //}
             entity.SetId(maxId + 1);
-            People.Add(entity);
+            Entities.Add(entity);
             return entity.GetId();
         }
 
@@ -48,16 +44,16 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
             var person = Read(id);
             if (person == null)
                 return false;
-            People.Remove(person);
+            Entities.Remove(person);
             return true;
         }
 
-        public Person Read(int id)
+        public T Read(int id)
         {
             //return (from person in People
             //              where person.PersonId == id
             //              select person).SingleOrDefault();
-            return People.SingleOrDefault(person => person.GetId() == id);
+            return Entities.SingleOrDefault(person => person.GetId() == id);
 
 
             //foreach (var item in People)
@@ -68,21 +64,21 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
             //return null;
         }
 
-        public IEnumerable<Person> Read()
+        public IEnumerable<T> Read()
         {
             //return from person in People select person;
-            return People.ToList();
+            return Entities.ToList();
             
             //var list = new List<Person>();
             //list.AddRange(People);
             //return list;
         }
 
-        public bool Update(Person entity)
+        public bool Update(T entity)
         {
             if(Delete(entity.GetId()))
             {
-                People.Add(entity);
+                Entities.Add(entity);
                 return true;
             }
             return false;

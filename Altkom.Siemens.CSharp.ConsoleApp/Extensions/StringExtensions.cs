@@ -32,6 +32,14 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Extensions
             }
         }
 
-        //TODO 1. Dodać metodę rozszerzającą, która parsuje string do DateTime
+        public static DateTime? ToDateTime(this string @string)
+        {
+            if (DateTime.TryParse(@string, out DateTime result))
+            {
+                return result;
+            }
+            else
+                return null;
+        }
     }
 }

@@ -15,7 +15,12 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 {
     class Program
     {
-        static ICrud<Person> Context { get; } = new Context();
+        static ICrud<Person> Context { get; } = new GenericContext<Person>(new List<Person>() {
+                new Instructor("Adam", "Adamski", Genders.Male, 3, "Programming") { InstructorId = 1 },
+                new Instructor("Piotr", "Piotrowski", Genders.Male, 2, "Economy") { InstructorId = 2 },
+                new Instructor("Michał", "Michalski", Genders.Male, 6, "Not specified") { InstructorId = 3 },
+                new Instructor("Ewa", "Michalski", Genders.Female, 7, "Not specified") { InstructorId = 4 }
+            });
 
         //* delegat - wskaźnik na funkcje
         delegate void Output(string output);
@@ -55,7 +60,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 switch (splittedInput[0].ToCommand())
                 {
                     case Commands.OrderBy:
-                        OrderByPersonProperty();
+                        OrderByPersonProperty(splittedInput.Length > 1 ? splittedInput[1] : null);
                         break;
                     case Commands.Delete:
                         if(id.HasValue)
@@ -78,9 +83,13 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
-        private static void OrderByPersonProperty()
+        private static void OrderByPersonProperty(string propertyName)
         {
-            OrderByFunc += collection => collection.OrderBy(person => person.LastName);
+            var property = typeof(Person).GetProperty(propertyName ?? string.Empty);
+            if (property == null)
+                OrderByFunc = null;
+            else
+                OrderByFunc += collection => collection.OrderBy(person => property.GetValue(person));
         }
 
         private static void DeletePerson(int id)
@@ -90,7 +99,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         private static void AddPerson()
         {
-            var person = new Person();
+            var person = new Instructor();
             if (EditPerson(person))
                 Context.Create(person);
 
@@ -115,8 +124,10 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 var birtDateString = ReadPersonData(nameof(Person.BithDate), person.BithDate.ToShortDateString(), text => 
                 {
                     // TODO 2. wykorzystać metodę rozszerzającą
-                    DateTime dateTime;
-                    return !DateTime.TryParse(text, out dateTime);
+                    //DateTime dateTime;
+                    //return !DateTime.TryParse(text, out dateTime);
+
+                    return text.ToDateTime() == null;
                 }
                 );
                 var genderString = ReadPersonData(nameof(Person.Gender), person.Gender.ToString(), text => !Enum.IsDefined(typeof(Genders), text));
@@ -125,7 +136,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 person.FirstName = firstName;
                 person.LastName = lastName;
                 // TODO 3. wykorzystać metodę rozszerzającą
-                person.BithDate = DateTime.Parse(birtDateString);
+                //person.BithDate = DateTime.Parse(birtDateString);
+                person.BithDate = birtDateString.ToDateTime().Value;
                 person.Gender = (Genders)Enum.Parse(typeof(Genders), genderString);
             }
             catch(Exception e)
@@ -203,7 +215,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
             //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
             var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
-                    person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
+                    person.GetId(), person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));
             var @string = string.Join("\n", strings);
 
 

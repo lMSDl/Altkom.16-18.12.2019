@@ -7,11 +7,30 @@ using System.Threading.Tasks;
 
 namespace Altkom.Siemens.CSharp.Models
 {
-    public class Person
+    public abstract class Person : IPerson
     {
-        public int PersonId { get; set; }
-
         private string _firstName;
+
+        protected Person() { }
+
+        protected Person(string firstName, string lastName, Genders gender) : this(firstName, lastName, gender, GenerateDate(lastName.GetHashCode()))
+        {
+        }
+
+        protected Person(string firstName, string lastName, Genders gender, DateTime bithDate)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Gender = gender;
+            BithDate = bithDate;
+        }
+
+        private static DateTime GenerateDate(int seed)
+        {
+            var random = new Random(seed);
+            return new DateTime(random.Next(1950, 1990), random.Next(1, 12), random.Next(1, 28));
+        }
+
         public string FirstName {
             get
             {
@@ -29,5 +48,11 @@ namespace Altkom.Siemens.CSharp.Models
         public DateTime BithDate { get; set; }
         public Genders Gender { get; set; }
 
+        public int GetAge()
+        {
+            return new DateTime((DateTime.Now.Subtract(BithDate).Ticks)).Year;
+        }
+        public abstract int GetId();
+        public abstract void SetId(int id);
     }
 }

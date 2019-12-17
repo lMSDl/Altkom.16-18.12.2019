@@ -124,9 +124,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
                 person.FirstName = firstName;
                 person.LastName = lastName;
-                person.BithDate = DateTime.Parse(birtDateString);
-
                 // TODO 3. wykorzystać metodę rozszerzającą
+                person.BithDate = DateTime.Parse(birtDateString);
                 person.Gender = (Genders)Enum.Parse(typeof(Genders), genderString);
             }
             catch(Exception e)

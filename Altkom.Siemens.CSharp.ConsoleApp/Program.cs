@@ -3,9 +3,11 @@ using Altkom.Siemens.CSharp.ConsoleApp.Extensions;
 using Altkom.Siemens.CSharp.ConsoleApp.Models;
 using Altkom.Siemens.CSharp.IServices;
 using Altkom.Siemens.CSharp.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +34,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         static Func<IEnumerable<Person>, IEnumerable<Person>> FilterFunc;
 
-
+        [STAThreadAttribute]
         static void Main(string[] args)
         {
             //* Delegaty mogą wskazywać na kilka funkcje jednocześnie. Wszystkie z nich zostaną wykonane podczas wywołania delegata.
@@ -90,12 +92,42 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                     break;
                 case Commands.Exit:
                     return false;
+                case Commands.ToJson:
+                        ToJson(id);
+                    break;
+
                 default:
                     break;
             }   
             //}
             
             return true;
+        }
+
+        private static void ToJson(int? id)
+        {
+            var obj = id.HasValue ? (object)Context.Read(id.Value) : Context.Read();
+
+            var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+            TextOutput(json);
+
+            var dialog = new SaveFileDialog()
+            {
+                Filter = "Json files|*.json|All files|*.*",
+                FileName = "person",
+                InitialDirectory = "C:"
+                
+            };
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                using (var writer = new StreamWriter(dialog.OpenFile()))
+                {
+                    writer.Write(json);
+                }
+
+            }
+
+            Console.ReadKey();
         }
 
         private static void Filter()

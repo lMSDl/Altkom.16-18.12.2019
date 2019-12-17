@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -45,8 +46,14 @@ namespace Altkom.Siemens.CSharp.Models
         }
 
         public string LastName { get; set; }
+        [JsonIgnore]
         public DateTime BithDate { get; set; }
         public Genders Gender { get; set; }
+
+        public bool ShouldSerializeGender()
+        {
+            return GetAge() < 50;
+        }
 
         public int GetAge()
         {

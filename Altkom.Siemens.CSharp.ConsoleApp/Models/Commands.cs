@@ -13,6 +13,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Models
         Add,
         Delete,
         OrderBy,
-        Filter
+        Filter,
+        ToJson
     }
 }

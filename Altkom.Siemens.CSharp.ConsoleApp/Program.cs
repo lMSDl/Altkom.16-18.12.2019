@@ -1,5 +1,6 @@
 ﻿using Altkom.Siemens.CSharp.CollectionBasedService;
 using Altkom.Siemens.CSharp.ConsoleApp.Models;
+using Altkom.Siemens.CSharp.IServices;
 using Altkom.Siemens.CSharp.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 {
     class Program
     {
-        static Context Context { get; } = new Context();
+        static ICrud<Person> Context { get; } = new Context();
 
         //* delegat - wskaźnik na funkcje
         delegate void Output(string output);
@@ -73,7 +74,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         private static void OrderBy()
         {
-
+            //TODO 1. Przypisać do OrderByFunc zapytanie LINQ sortujące wg nazwiska
         }
 
         private static void DeletePerson(int id)
@@ -164,6 +165,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
             //3. wykorzystanie LINQ METHOD CHAIN do budowy wyświetlanego tekstu 
             var people = Context.Read();
+
+            //TODO 2. wywołać funkcje delegata OrderByFunc jeśli nie jest null 
+
 
             var strings =  people.Select(person => string.Format("{0, -3} {1, -15} {2, -15} {3, -10} {4, -15}",
                     person.PersonId, person.FirstName, person.LastName, person.BithDate.ToShortDateString(), person.Gender));

@@ -92,6 +92,10 @@
       <Project>{55803698-7579-4ffe-813c-19a79191ec61}</Project>
       <Name>CollectionBasedService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Altkom.Siemens.CSharp.IServices\IServices.csproj">
+      <Project>{56EB102B-B4C2-4B4F-BCC8-2645A3896E64}</Project>
+      <Name>IServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Altkom.Siemens.CSharp.Models\Models.csproj">
       <Project>{50af854c-c5f7-40b5-8810-f6ccb486aa19}</Project>
       <Name>Models</Name>

@@ -30,6 +30,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         //* Func i Action - predefiniowane generyczne delegaty. Action przyjmuje tylko parametry wejściowe, dla Func określamy dodatkowo typ zwracany.
         static Func<IEnumerable<Person>, IEnumerable<Person>> OrderByFunc;
 
+        static Func<IEnumerable<Person>, IEnumerable<Person>> FilterFunc;
+
 
         static void Main(string[] args)
         {
@@ -60,6 +62,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             //{
             switch (splittedInput[0].ToCommand())
             {
+                case Commands.Filter:
+                    Filter();
+                    break;
                 case Commands.OrderBy:
                     OrderByPersonProperty(splittedInput.Length > 1 ? splittedInput[1] : null);
                     break;
@@ -93,6 +98,16 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
+        private static void Filter()
+        {
+            FilterFunc +=
+
+                //TODO 2 Osoby z literą A w nazwisku
+                //TODO 3 Studenci z wiekiem < 50
+                //TODO 4 osoby z imieniem dłuższym niż 3 znaki lub z nazwiskiem na E
+                //TODO 5 Instuktor z Ekonomii i osoba z id 5
+        }
+
         private static void OrderByPersonProperty(string propertyName)
         {
             var property = typeof(Person).GetProperty(propertyName ?? string.Empty);
@@ -117,26 +132,63 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         private static void AddStudent()
         {
-
+            var person = new Student();
+            if (EditStudent(person))
+                Context.Create(person);
         }
 
-            private static void EditPerson(int id)
+        private static void EditPerson(int id)
         {
             var person = Context.Read(id);
-            if(EditPerson(person))
+
+            //if (person is Student student)
+            //{
+            //    if (!EditStudent(student))
+            //        return;
+            //}
+            //else if (person is Instructor instructor)
+            //{
+            //    if (!EditInstructor(instructor))
+            //        return;
+            //}
+
+            switch (person)
+            {
+                case Student student:
+                    if (!EditStudent(student))
+                        return;
+                    break;
+                case Instructor instructor:
+                    if (!EditInstructor(instructor))
+                        return;
+                    break;
+            }
             Context.Update(person);
         }
 
 
         private static bool EditStudent(Student student)
         {
-
+            if(EditPerson(student))
+            {
+                var yearOfStudy = ReadPersonData(nameof(Student.YearOfStudy), student.YearOfStudy.ToString(), text => text.ToInt() == null);
+                student.YearOfStudy = yearOfStudy.ToInt().Value;
+                return true;
+            }
+            return false;
         }
 
 
-        private static bool EditInstructor(Instructor person)
+        private static bool EditInstructor(Instructor instructor)
         {
-
+            if (EditPerson(instructor))
+            {
+                var yearsOfWork = ReadPersonData(nameof(Instructor.YearsOfWork), instructor.YearsOfWork.ToString(), text => text.ToInt() == null);
+                instructor.Specialization = ReadPersonData(nameof(Instructor.Specialization), instructor.Specialization, x => false);
+                instructor.YearsOfWork = yearsOfWork.ToInt().Value;
+                return true;
+            }
+            return false;
         }
 
         private static bool EditPerson(Person person)
@@ -230,6 +282,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
             var people = Context.Read();
             people = OrderByFunc?.Invoke(people) ?? people;
+            //TODO 1 przefiltrowanie
+
             //if (OrderByFunc != null)
             //{
             //    people = OrderByFunc.Invoke(people);

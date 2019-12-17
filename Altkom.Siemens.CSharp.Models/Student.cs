@@ -8,6 +8,11 @@ namespace Altkom.Siemens.CSharp.Models
 {
     public class Student : Person, IStudent
     {
+        public Student()
+        {
+
+        }
+
         public Student(string firstName, string lastName, Genders gender, int yearOfStudy) : base(firstName, lastName, gender)
         {
             YearOfStudy = yearOfStudy;
@@ -24,6 +29,11 @@ namespace Altkom.Siemens.CSharp.Models
         public override void SetId(int id)
         {
             StudentId = id;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + string.Format("{0, -5}", YearOfStudy);
         }
     }
 }

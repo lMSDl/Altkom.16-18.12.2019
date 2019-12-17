@@ -31,5 +31,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Extensions
                 return null;
             }
         }
+
+        //TODO 1. Dodać metodę rozszerzającą, która parsuje string do DateTime
     }
 }

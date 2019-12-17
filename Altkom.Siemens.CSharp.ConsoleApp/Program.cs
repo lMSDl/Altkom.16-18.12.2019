@@ -114,6 +114,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
                 var birtDateString = ReadPersonData(nameof(Person.BithDate), person.BithDate.ToShortDateString(), text => 
                 {
+                    // TODO 2. wykorzystać metodę rozszerzającą
                     DateTime dateTime;
                     return !DateTime.TryParse(text, out dateTime);
                 }
@@ -124,6 +125,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 person.FirstName = firstName;
                 person.LastName = lastName;
                 person.BithDate = DateTime.Parse(birtDateString);
+
+                // TODO 3. wykorzystać metodę rozszerzającą
                 person.Gender = (Genders)Enum.Parse(typeof(Genders), genderString);
             }
             catch(Exception e)

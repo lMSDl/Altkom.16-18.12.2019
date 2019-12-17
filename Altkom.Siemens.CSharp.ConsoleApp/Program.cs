@@ -100,15 +100,38 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
         private static void Filter()
         {
-            FilterFunc +=
-
-                //TODO 2 Osoby z literą A w nazwisku
-                //TODO 3 Studenci z wiekiem < 50
-                //TODO 4 osoby z imieniem dłuższym niż 3 znaki lub z nazwiskiem na E
-                //TODO 5 Instuktor z Ekonomii i osoba z id 5
+            FilterFunc += FilterByNameLengthAndLastNameStartsWithE;
         }
 
-        private static void OrderByPersonProperty(string propertyName)
+        static IEnumerable<Person> FilterByAInLastName(IEnumerable<Person> people)
+        {
+            return people.Where(person => person.LastName.Contains("a"));
+            //return from person in people where person.LastName.Contains("a") select person;
+        }
+
+        static IEnumerable<Person> FilterByStudentAge(IEnumerable<Person> people)
+        {
+            return people.Where(person => person is Student).Where(person => person.GetAge() < 50);
+        }
+
+        static IEnumerable<Person> FilterByInstrucorAndId(IEnumerable<Person> people)
+        {
+            var query1 =
+            //people.Where(person => person is Instructor).Cast<Instructor>().Where(instructor => instructor.Specialization == "Economy");
+            people.OfType<Instructor>().Where(instructor => instructor.Specialization == "Economy");
+            //people.Select(person => person as Instructor).Where(x => x != null);
+
+            var query2 = people.Where(x => x.GetId() == 5);
+
+            return query1.Concat(query2);
+        }
+
+        static IEnumerable<Person> FilterByNameLengthAndLastNameStartsWithE(IEnumerable<Person> people)
+        {
+            return people.Where(person => person.FirstName.Length > 3 || person.LastName.StartsWith("E"));
+        }
+
+            private static void OrderByPersonProperty(string propertyName)
         {
             var property = typeof(Person).GetProperty(propertyName ?? string.Empty);
             if (property == null)
@@ -122,6 +145,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             Context.Delete(id);
         }
 
+        #region ADD
         private static void AddInstructor()
         {
             var person = new Instructor();
@@ -136,7 +160,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             if (EditStudent(person))
                 Context.Create(person);
         }
+        #endregion
 
+        #region Edit
         private static void EditPerson(int id)
         {
             var person = Context.Read(id);
@@ -240,6 +266,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return input;
 
         }
+        #endregion
 
         private static void Example()
         {
@@ -282,7 +309,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 
             var people = Context.Read();
             people = OrderByFunc?.Invoke(people) ?? people;
-            //TODO 1 przefiltrowanie
+            people = FilterFunc?.Invoke(people) ?? people;
 
             //if (OrderByFunc != null)
             //{

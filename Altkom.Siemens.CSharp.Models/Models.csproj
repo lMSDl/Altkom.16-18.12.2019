@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class.cs" />
     <Compile Include="Genders.cs" />
     <Compile Include="IInstructor.cs" />
     <Compile Include="Instructor.cs" />

@@ -1,6 +1,7 @@
 ﻿using Altkom.Siemens.CSharp.CollectionBasedService;
 using Altkom.Siemens.CSharp.ConsoleApp.Extensions;
 using Altkom.Siemens.CSharp.ConsoleApp.Models;
+using Altkom.Siemens.CSharp.DAL.Services;
 using Altkom.Siemens.CSharp.IServices;
 using Altkom.Siemens.CSharp.Models;
 using Newtonsoft.Json;
@@ -17,13 +18,15 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
 {
     class Program
     {
-        static ICrud<Person> Context { get; } = new GenericContext<Person>(new List<Person>() {
-                new Instructor("Adam", "Adamski", Genders.Male, 3, "Programming") { InstructorId = 1 },
-                new Instructor("Piotr", "Piotrowski", Genders.Male, 2, "Economy") { InstructorId = 2 },
-                new Instructor("Michał", "Michalski", Genders.Male, 6, "Not specified") { InstructorId = 3 },
-                new Student("Ewa", "Michalska", Genders.Female, 2) { StudentId = 2 },
-                new Student("Ewa", "Ewowska", Genders.Female, 1) { StudentId = 1 }
-            });
+        //static ICrud<Person> Context { get; } = new GenericContext<Person>(new List<Person>() {
+        //        new Instructor("Adam", "Adamski", Genders.Male, 3, "Programming") { InstructorId = 1 },
+        //        new Instructor("Piotr", "Piotrowski", Genders.Male, 2, "Economy") { InstructorId = 2 },
+        //        new Instructor("Michał", "Michalski", Genders.Male, 6, "Not specified") { InstructorId = 3 },
+        //        new Student("Ewa", "Michalska", Genders.Female, 2) { StudentId = 2 },
+        //        new Student("Ewa", "Ewowska", Genders.Female, 1) { StudentId = 1 }
+        //    });
+
+        static ICrud<Person> Context { get; } = new PersonService();
 
         //* delegat - wskaźnik na funkcje
         delegate void Output(string output);

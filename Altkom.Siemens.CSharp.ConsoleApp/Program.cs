@@ -93,7 +93,12 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 case Commands.Exit:
                     return false;
                 case Commands.ToJson:
-                        ToJson(id);
+                    if (id.HasValue)
+                        ToJson(id.Value);
+                    break;
+                case Commands.ToXml:
+                    if (id.HasValue)
+                        ToXml(id.Value);
                     break;
                 case Commands.FromJson:
                     FromJson();
@@ -106,9 +111,20 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             return true;
         }
 
-        private static void ToJson(int? id)
+
+        static void ToXml(int id)
         {
-            var obj = id.HasValue ? (object)Context.Read(id.Value) : Context.Read();
+            var obj = Context.Read(id);
+            var json = JsonConvert.SerializeObject(obj);
+            var xml = JsonConvert.DeserializeXNode(json, nameof(Person));
+
+            TextOutput(xml.ToString());
+            Console.ReadKey();
+        }
+
+        private static void ToJson(int id)
+        {
+            var obj = Context.Read(id);
 
 
             var json = JsonConvert.SerializeObject(obj, Formatting.Indented);

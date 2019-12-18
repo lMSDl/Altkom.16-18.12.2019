@@ -15,6 +15,7 @@ namespace Altkom.Siemens.CSharp.ConsoleApp.Models
         OrderBy,
         Filter,
         ToJson,
-        FromJson
+        FromJson,
+        ToXml
     }
 }

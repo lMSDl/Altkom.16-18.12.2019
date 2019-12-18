@@ -55,6 +55,8 @@ namespace Altkom.Siemens.CSharp.Models
             return GetAge() < 50;
         }
 
+        public int Age => GetAge();
+
         public int GetAge()
         {
             return new DateTime((DateTime.Now.Subtract(BithDate).Ticks)).Year;

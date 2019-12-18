@@ -95,7 +95,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 case Commands.ToJson:
                         ToJson(id);
                     break;
-
+                case Commands.FromJson:
+                    FromJson();
+                    break;
                 default:
                     break;
             }   
@@ -108,7 +110,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         {
             var obj = id.HasValue ? (object)Context.Read(id.Value) : Context.Read();
 
+
             var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+
             TextOutput(json);
 
             var dialog = new SaveFileDialog()
@@ -130,6 +134,25 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             Console.ReadKey();
         }
 
+        static void FromJson()
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Filter = "Json files|*.json|All files|*.*"
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string json;
+                using (var reader = new StreamReader(dialog.OpenFile()))
+                {
+                    json = reader.ReadToEnd();
+                }
+                var instructor = JsonConvert.DeserializeObject<Instructor>(json);
+                Context.Create(instructor);
+            }
+        }
+
+        #region Filter
         private static void Filter()
         {
             FilterFunc += FilterByNameLengthAndLastNameStartsWithE;
@@ -162,8 +185,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         {
             return people.Where(person => person.FirstName.Length > 3 || person.LastName.StartsWith("E"));
         }
+        #endregion
 
-            private static void OrderByPersonProperty(string propertyName)
+        private static void OrderByPersonProperty(string propertyName)
         {
             var property = typeof(Person).GetProperty(propertyName ?? string.Empty);
             if (property == null)

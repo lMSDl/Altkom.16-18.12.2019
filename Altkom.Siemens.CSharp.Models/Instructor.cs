@@ -23,7 +23,7 @@ namespace Altkom.Siemens.CSharp.Models
 
         public int YearsOfWork { get; set; }
         public string Specialization { get; set; }
-
+        
         public override int GetId()
         {
             return InstructorId;

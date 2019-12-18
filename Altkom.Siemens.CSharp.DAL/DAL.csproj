@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\PersonServiceAsync.cs" />
     <Compile Include="Services\PersonService.cs" />
   </ItemGroup>
   <ItemGroup>

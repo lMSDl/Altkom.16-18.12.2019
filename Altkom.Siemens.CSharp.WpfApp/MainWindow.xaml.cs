@@ -24,7 +24,7 @@ namespace Altkom.Siemens.CSharp.WpfApp
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private ICrud<Person> Service { get; } = new PersonService();
+        private ICrudAsync<Person> Service { get; } = new PersonServiceAsync();
 
         public MainWindow()
         {
@@ -35,9 +35,9 @@ namespace Altkom.Siemens.CSharp.WpfApp
         public ICollection<Person> People { get; set; }
         public Person SelectedPerson { get; set; }
 
-        private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
+        private async void ButtonRefresh_Click(object sender, RoutedEventArgs e)
         {
-            People = Service.Read().ToList();
+            People = (await Service.ReadAsync()).ToList();
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(People)));
         }
 
@@ -48,6 +48,14 @@ namespace Altkom.Siemens.CSharp.WpfApp
         {
             var dialog = new PersonWindow(SelectedPerson);
             dialog.ShowDialog();
+        }
+
+        private async void ButtonDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedPerson == null)
+                return;
+            await Service.DeleteAsync(SelectedPerson.GetType(), SelectedPerson.GetId());
+            ButtonRefresh_Click(this, new RoutedEventArgs());
         }
     }
 }

@@ -27,6 +27,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Button Content="Refresh" Click="ButtonRefresh_Click"/>
             <Button Content="Edit" Click="ButtonEdit_Click"/>
+            <Button Content="Delete" Click="ButtonDelete_Click"/>
         </StackPanel>
     </Grid>
 </Window>

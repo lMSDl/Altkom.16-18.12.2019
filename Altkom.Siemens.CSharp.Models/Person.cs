@@ -20,8 +20,8 @@ namespace Altkom.Siemens.CSharp.Models
 
         protected Person(string firstName, string lastName, Genders gender, DateTime bithDate)
         {
-            FirstName = firstName;
             LastName = lastName;
+            FirstName = firstName;
             Gender = gender;
             BithDate = bithDate;
         }

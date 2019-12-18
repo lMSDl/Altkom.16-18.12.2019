@@ -9,9 +9,9 @@ namespace Altkom.Siemens.CSharp.IServices
     public interface ICrud<T> where T : class
     {
         int Create(T entity);
-        T Read(int id);
+        T Read(Type type, int id);
         IEnumerable<T> Read();
         bool Update(T entity);
-        bool Delete(int id);
+        bool Delete(Type type, int id);
     }
 }

@@ -21,8 +21,8 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 new Instructor("Adam", "Adamski", Genders.Male, 3, "Programming") { InstructorId = 1 },
                 new Instructor("Piotr", "Piotrowski", Genders.Male, 2, "Economy") { InstructorId = 2 },
                 new Instructor("Michał", "Michalski", Genders.Male, 6, "Not specified") { InstructorId = 3 },
-                new Student("Ewa", "Michalska", Genders.Female, 2) { StudentId = 4 },
-                new Student("Ewa", "Ewowska", Genders.Female, 1) { StudentId = 5 }
+                new Student("Ewa", "Michalska", Genders.Female, 2) { StudentId = 2 },
+                new Student("Ewa", "Ewowska", Genders.Female, 1) { StudentId = 1 }
             });
 
         //* delegat - wskaźnik na funkcje
@@ -56,10 +56,14 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         {
             var splittedInput = input.Split(' ', '.');
             int? id = null;
+            Type type = null;
             if (splittedInput.Length > 1)
-            //    int.TryParse(splittedInput[1], out id);
-                id = splittedInput[1].ToInt();
-
+            {
+                type = typeof(Person).Assembly.GetType(typeof(Person).Namespace + "." + splittedInput[1], false, true);
+                if (splittedInput.Length > 2)
+                    //    int.TryParse(splittedInput[1], out id);
+                    id = splittedInput[2].ToInt();
+            }
             //if (Enum.TryParse(splittedInput[0], true, out Commands command))
             //{
             switch (splittedInput[0].ToCommand())
@@ -71,34 +75,28 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                     OrderByPersonProperty(splittedInput.Length > 1 ? splittedInput[1] : null);
                     break;
                 case Commands.Delete:
-                    if(id.HasValue)
-                        DeletePerson(id.Value);
+                    if(id.HasValue && type != null)
+                        DeletePerson(type, id.Value);
                     break;
                 case Commands.Add:
-                    if(splittedInput.Length > 1)
-                        switch (splittedInput[1])
-                        {
-                            case nameof(Student):
-                                AddStudent();
-                                break;
-                            case nameof(Instructor):
-                                AddInstructor();
-                                break;
-                        }
+                    if (type == typeof(Student))
+                        AddStudent();
+                    else if (type == typeof(Instructor))
+                        AddInstructor();
                     break;
                 case Commands.Edit:
-                    if (id.HasValue)
-                        EditPerson(id.Value);
+                    if (id.HasValue && type != null)
+                        EditPerson(type, id.Value);
                     break;
                 case Commands.Exit:
                     return false;
                 case Commands.ToJson:
-                    if (id.HasValue)
-                        ToJson(id.Value);
+                    if (id.HasValue && type != null)
+                        ToJson(type, id.Value);
                     break;
                 case Commands.ToXml:
-                    if (id.HasValue)
-                        ToXml(id.Value);
+                    if (id.HasValue && type != null)
+                        ToXml(type, id.Value);
                     break;
                 case Commands.FromJson:
                     FromJson();
@@ -112,9 +110,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         }
 
 
-        static void ToXml(int id)
+        static void ToXml(Type type, int id)
         {
-            var obj = Context.Read(id);
+            var obj = Context.Read(type, id);
             var json = JsonConvert.SerializeObject(obj);
             var xml = JsonConvert.DeserializeXNode(json, nameof(Person));
 
@@ -122,9 +120,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             Console.ReadKey();
         }
 
-        private static void ToJson(int id)
+        private static void ToJson(Type type, int id)
         {
-            var obj = Context.Read(id);
+            var obj = Context.Read(type, id);
 
 
             var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
@@ -212,9 +210,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
                 OrderByFunc += collection => collection.OrderBy(person => property.GetValue(person));
         }
 
-        private static void DeletePerson(int id)
+        private static void DeletePerson(Type type, int id)
         {
-            Context.Delete(id);
+            Context.Delete(type, id);
         }
 
         #region ADD
@@ -235,9 +233,9 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
         #endregion
 
         #region Edit
-        private static void EditPerson(int id)
+        private static void EditPerson(Type type, int id)
         {
-            var person = Context.Read(id);
+            var person = Context.Read(type, id);
 
             //if (person is Student student)
             //{

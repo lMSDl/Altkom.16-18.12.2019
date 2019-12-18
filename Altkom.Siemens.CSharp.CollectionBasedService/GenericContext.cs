@@ -29,18 +29,18 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
             return entity.GetId();
         }
 
-        public bool Delete(int id)
+        public bool Delete(Type type, int id)
         {
-            var person = Read(id);
+            var person = Read(type, id);
             if (person == null)
                 return false;
             Entities.Remove(person);
             return true;
         }
 
-        public T Read(int id)
+        public T Read(Type type, int id)
         {
-            return Entities.SingleOrDefault(person => person.GetId() == id);
+            return Entities.Where(x => x.GetType() == type).SingleOrDefault(person => person.GetId() == id);
         }
 
         public IEnumerable<T> Read()
@@ -50,7 +50,10 @@ namespace Altkom.Siemens.CSharp.CollectionBasedService
 
         public bool Update(T entity)
         {
-            if(Delete(entity.GetId()))
+            if (entity == null)
+                return false;
+
+            if(Delete(entity.GetType(), entity.GetId()))
             {
                 Entities.Add(entity);
                 return true;

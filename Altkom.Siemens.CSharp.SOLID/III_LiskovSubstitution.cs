@@ -9,22 +9,27 @@ namespace Altkom.Siemens.CSharp.SOLID
     abstract class Vehicle
     {
         public string Name { get; set; }
-        public abstract void Fly();
+        public abstract void Move();
     }
 
     class Car : Vehicle
     {
-        public override void Fly()
+        public override void Move()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("I am driving!");
         }
     }
 
     class Airplane : Vehicle
     {
-        public override void Fly()
+        public void Fly()
         {
             Console.WriteLine("I am flying!");
+        }
+
+        public override void Move()
+        {
+            Fly();
         }
     }
 }

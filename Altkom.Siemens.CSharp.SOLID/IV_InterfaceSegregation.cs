@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace Altkom.Siemens.CSharp.SOLID
 {
-    interface IFormatter
+    interface IExcelFormatter
     {
         void ToExcel();
+    }
+
+    interface IPdfFormatter
+    {
         void ToPdf();
     }
 
-    class Report : IFormatter
+    class Report : IExcelFormatter, IPdfFormatter
     {
         public void ToExcel()
         {
@@ -25,13 +29,8 @@ namespace Altkom.Siemens.CSharp.SOLID
         }
     }
 
-    class Poem : IFormatter
+    class Poem : IPdfFormatter
     {
-        public void ToExcel()
-        {
-            throw new NotImplementedException();
-        }
-
         public void ToPdf()
         {
             Console.WriteLine("Pdf generated");

@@ -11,13 +11,16 @@ namespace Altkom.Siemens.CSharp.SOLID
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
+    }
 
-        public bool ValidateEmail()
+    public static class EmailValidator
+    {
+        public static bool ValidateEmail(string email)
         {
             try
             {
-                var addr = new System.Net.Mail.MailAddress(Email);
-                return addr.Address == Email;
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
             }
             catch
             {

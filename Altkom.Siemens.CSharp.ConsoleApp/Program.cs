@@ -1,6 +1,7 @@
 ﻿using Altkom.Siemens.CSharp.CollectionBasedService;
 using Altkom.Siemens.CSharp.ConsoleApp.Extensions;
 using Altkom.Siemens.CSharp.ConsoleApp.Models;
+using Altkom.Siemens.CSharp.ConsoleApp.Properties;
 using Altkom.Siemens.CSharp.DAL.Services;
 using Altkom.Siemens.CSharp.IServices;
 using Altkom.Siemens.CSharp.Models;
@@ -136,11 +137,13 @@ namespace Altkom.Siemens.CSharp.ConsoleApp
             {
                 Filter = "Json files|*.json|All files|*.*",
                 FileName = "person",
-                InitialDirectory = "C:"
+                InitialDirectory = Settings.Default.InitialDirectory
                 
             };
             if(dialog.ShowDialog() == DialogResult.OK)
             {
+                Settings.Default.InitialDirectory = dialog.FileName;
+                Settings.Default.Save();
                 using (var writer = new StreamWriter(dialog.OpenFile()))
                 {
                     writer.Write(json);
